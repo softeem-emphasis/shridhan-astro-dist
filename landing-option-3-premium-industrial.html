@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shridhan Automation - Premium Industrial</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --navy: #0a1628;
+      --blue: #004AAD;
+      --orange: #FF6B35;
+      --gold: #D4AF37;
+      --cream: #ffffff;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: var(--navy);
+      background: var(--cream);
+    }
+
+    /* Premium Navigation */
+    .premium-nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 1.5rem 8%;
+      background: rgba(10, 22, 40, 0.95);
+      backdrop-filter: blur(20px);
+      z-index: 1000;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+    }
+
+    .nav-container {
+      max-width: 1600px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand-icon {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, var(--gold) 0%, #f4d03f 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 1.5rem;
+      color: var(--navy);
+    }
+
+    .brand-name {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: white;
+      letter-spacing: 1px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 3rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      letter-spacing: 0.5px;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .nav-links a::before {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--gold);
+      transition: width 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: var(--gold);
+    }
+
+    .nav-links a:hover::before {
+      width: 100%;
+    }
+
+    .nav-cta {
+      padding: 0.9rem 2rem;
+      background: linear-gradient(135deg, var(--gold) 0%, #f4d03f 100%);
+      color: var(--navy);
+      border-radius: 50px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+    }
+
+    .nav-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(212, 175, 55, 0.5);
+    }
+
+    /* Full Hero */
+    .full-hero {
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      background: linear-gradient(135deg, var(--navy) 0%, #1a2942 50%, var(--blue) 100%);
+    }
+
+    .hero-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(0,74,173,0.15) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(0,102,221,0.2) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.05) 0%, transparent 60%);
+      opacity: 1;
+      z-index: 1;
+      animation: gradientShift 15s ease-in-out infinite;
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { transform: scale(1) rotate(0deg); }
+      50% { transform: scale(1.1) rotate(5deg); }
+    }
+
+    .full-hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        linear-gradient(45deg, transparent 30%, rgba(0,74,173,0.05) 50%, transparent 70%),
+        linear-gradient(-45deg, transparent 30%, rgba(255,255,255,0.03) 50%, transparent 70%);
+      background-size: 200% 200%;
+      animation: meshMove 20s ease-in-out infinite;
+      z-index: 1;
+    }
+
+    @keyframes meshMove {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .hero-container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 8rem 8% 4rem;
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 6rem;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-headline {
+      position: relative;
+    }
+
+    .hero-subtitle {
+      display: inline-block;
+      padding: 0.7rem 1.8rem;
+      background: linear-gradient(135deg, var(--gold), #f4d03f);
+      color: var(--navy);
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      border-radius: 50px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+    }
+
+    .hero-headline h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 5.5rem;
+      font-weight: 900;
+      color: white;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      letter-spacing: -1px;
+    }
+
+    .hero-headline h1 .highlight {
+      background: linear-gradient(135deg, var(--gold) 0%, #f4d03f 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-description {
+      font-size: 1.3rem;
+      color: rgba(255, 255, 255, 0.85);
+      line-height: 1.9;
+      margin-bottom: 3rem;
+      font-weight: 300;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-premium {
+      padding: 1.3rem 3rem;
+      border-radius: 60px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold) 0%, #f4d03f 100%);
+      color: var(--navy);
+      box-shadow: 0 10px 40px rgba(212, 175, 55, 0.4);
+    }
+
+    .btn-gold:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 15px 50px rgba(212, 175, 55, 0.6);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: white;
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: white;
+    }
+
+    /* Premium Card */
+    .premium-card {
+      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 30px;
+      padding: 3rem;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+      animation: float 8s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(2deg); }
+    }
+
+    .card-glow {
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(212,175,55,0.15) 0%, transparent 70%);
+      pointer-events: none;
+      animation: rotate 30s linear infinite;
+    }
+
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .card-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-image {
+      width: 100%;
+      aspect-ratio: 1/1;
+      background: white;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2rem;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .card-image img {
+      width: 85%;
+    }
+
+    .card-info h3 {
+      font-size: 1.8rem;
+      color: white;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+
+    .card-info p {
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+
+    .premium-badges {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      padding: 0.6rem 1.4rem;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    /* Excellence Section */
+    .excellence {
+      padding: 8rem 8%;
+      background: white;
+      position: relative;
+    }
+
+    .excellence-grid {
+      max-width: 1600px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+    }
+
+    .excellence-content h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: var(--navy);
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+    }
+
+    .excellence-content p {
+      font-size: 1.2rem;
+      color: #6b6b6b;
+      line-height: 1.9;
+      margin-bottom: 3rem;
+    }
+
+    .features-list {
+      display: grid;
+      gap: 2rem;
+    }
+
+    .feature-item {
+      display: flex;
+      gap: 1.5rem;
+      align-items: flex-start;
+    }
+
+    .feature-icon {
+      width: 70px;
+      height: 70px;
+      background: linear-gradient(135deg, var(--blue) 0%, #0066DD 100%);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      flex-shrink: 0;
+      box-shadow: 0 10px 30px rgba(0,74,173,0.3);
+    }
+
+    .feature-text h4 {
+      font-size: 1.4rem;
+      color: var(--navy);
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+    }
+
+    .feature-text p {
+      font-size: 1rem;
+      color: #6b6b6b;
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    .excellence-visual {
+      position: relative;
+    }
+
+    .visual-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    .visual-card {
+      background: linear-gradient(135deg, var(--navy) 0%, #1a2942 100%);
+      border-radius: 25px;
+      padding: 2.5rem 2rem;
+      color: white;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      transition: transform 0.3s;
+    }
+
+    .visual-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .visual-number {
+      font-size: 3.5rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--gold) 0%, #f4d03f 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .visual-label {
+      font-size: 1.1rem;
+      font-weight: 600;
+      opacity: 0.9;
+    }
+
+    /* Final CTA */
+    .final-cta {
+      padding: 8rem 8%;
+      background:  linear-gradient(135deg, var(--navy) 0%, #1a2942 100%);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .final-cta::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 50% 50%, rgba(212,175,55,0.1) 0%, transparent 70%);
+    }
+
+    .cta-box {
+      max-width: 900px;
+      margin: 0 auto;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 40px;
+      padding: 5rem 4rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-box h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.5rem;
+      color: white;
+      margin-bottom: 1.5rem;
+      font-weight: 900;
+    }
+
+    .cta-box p {
+      font-size: 1.4rem;
+      color: rgba(255,255,255,0.85);
+      margin-bottom: 3rem;
+      line-height: 1.8;
+    }
+
+    .contact-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-input {
+      padding: 1.3rem 1.8rem;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 15px;
+      color: white;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.3s;
+    }
+
+    .form-input::placeholder {
+      color: rgba(255,255,255,0.5);
+    }
+
+    .form-input:focus {
+      background: rgba(255,255,255,0.15);
+      border-color: var(--gold);
+    }
+
+    .form-submit {
+      grid-column: 1 / -1;
+      padding: 1.5rem;
+      background: linear-gradient(135deg, var(--gold) 0%, #f4d03f 100%);
+      color: var(--navy);
+      border: none;
+      border-radius: 60px;
+      font-weight: 800;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 10px 40px rgba(212,175,55,0.4);
+    }
+
+    .form-submit:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 50px rgba(212,175,55,0.6);
+    }
+
+    /* Mobile */
+    @media (max-width: 968px) {
+      .hero-container, .excellence-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-headline h1 {
+        font-size: 3.5rem;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .contact-form {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Premium Navigation -->
+  <nav class="premium-nav">
+    <div class="nav-container">
+      <img src="/ShridhanNameLogoTagline.svg" alt="Shridhan Automation" style="height: 50px;">
+      <ul class="nav-links">
+        <li><a href="/products">PRODUCTS</a></li>
+        <li><a href="/services">SERVICES</a></li>
+        <li><a href="/company">COMPANY</a></li>
+        <li><a href="/contact">CONTACT</a></li>
+      </ul>
+      <a href="/contact" class="nav-cta">Request Quote</a>
+    </div>
+  </nav>
+
+  <!-- Full Hero -->
+  <section class="full-hero">
+    <div class="hero-bg"></div>
+    <div class="hero-container">
+      <div class="hero-headline">
+        <span class="hero-subtitle">🏆 TRUSTED SINCE 1990</span>
+        <h1>Where <span class="highlight">Precision</span> Meets Performance</h1>
+        <p class="hero-description">
+          Leading manufacturer of diaphragm seal systems, level instrumentation, and industrial automation solutions trusted by global industries for critical applications.
+        </p>
+        <div class="hero-buttons">
+          <a href="/products" class="btn-premium btn-gold">
+            Explore Solutions
+            <span>→</span>
+          </a>
+          <a href="/contact" class="btn-premium btn-outline">
+            Schedule Consultation
+          </a>
+        </div>
+      </div>
+      <div class="premium-card">
+        <div class="card-glow"></div>
+        <div class="card-content">
+          <div class="card-image">
+            <img src="/images/homepage1.png" alt="Shridhan Engineering Team">
+          </div>
+          <div class="card-info">
+            <h3>Elite Instrumentation</h3>
+            <p>Engineered for the world's most critical applications with unmatched precision and reliability.</p>
+            <div class="premium-badges">
+              <span class="badge">ASME IX</span>
+              <span class="badge">ISO 9001</span>
+              <span class="badge">CE Marked</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Core Strengths Section -->
+  <section class="excellence" id="excellence">
+    <div class="excellence-grid">
+      <div class="excellence-content">
+        <h2>Our Core Strengths</h2>
+        <p>Three decades of innovation, precision manufacturing, and unwavering commitment to quality has made Shridhan the preferred partner for global industry leaders.</p>
+        
+        <!-- Rotating Strengths -->
+        <div style="margin: 2rem 0 3rem; height: 80px; overflow: hidden; position: relative;">
+          <div id="rotating-strengths" style="transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);">
+            <div style="height: 80px; display: flex; align-items: center;">
+              <h3 style="font-size: 2rem; margin: 0; background: linear-gradient(135deg, var(--gold) 0%, #f4d03f 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Engineering Expertise</h3>
+            </div>
+            <div style="height: 80px; display: flex; align-items: center;">
+              <h3 style="font-size: 2rem; margin: 0; background: linear-gradient(135deg, var(--gold) 0%, #f4d03f 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Global Presence</h3>
+            </div>
+            <div style="height: 80px; display: flex; align-items: center;">
+              <h3 style="font-size: 2rem; margin: 0; background: linear-gradient(135deg, var(--gold) 0%, #f4d03f 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Quality Assurance</h3>
+            </div>
+            <div style="height: 80px; display: flex; align-items: center;">
+              <h3 style="font-size: 2rem; margin: 0; background: linear-gradient(135deg, var(--gold) 0%, #f4d03f 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Customer-Centric Solutions</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="features-list">
+          <div class="feature-item">
+            <div class="feature-icon">⚙️</div>
+            <div class="feature-text">
+              <h4>ASME Certified Manufacturing</h4>
+              <p>Section IX qualified welders and state-of-the-art NDT facilities ensure every product meets the highest international standards.</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🔬</div>
+            <div class="feature-text">
+              <h4>Advanced Testing Labs</h4>
+              <p>In-house FAT facilities and helium leak testing guarantee reliability in the most extreme conditions.</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🌍</div>
+            <div class="feature-text">
+              <h4>Global Reach, Local Support</h4>
+              <p>Serving industries worldwide with responsive technical support and rapid deployment capabilities.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="excellence-visual">
+        <div class="visual-grid">
+          <div class="visual-card">
+            <span class="visual-number">500+</span>
+            <span class="visual-label">Projects Delivered</span>
+          </div>
+          <div class="visual-card">
+            <span class="visual-number">30+</span>
+            <span class="visual-label">Years Experience</span>
+          </div>
+          <div class="visual-card">
+            <span class="visual-number">98%</span>
+            <span class="visual-label">Client Retention</span>
+          </div>
+          <div class="visual-card">
+            <span class="visual-number">24/7</span>
+            <span class="visual-label">Technical Support</span>
+          </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Product Collections -->
+  <section style="padding: 8rem 8%; background: var(--cream);">
+    <div style="text-align: center; max-width: 800px; margin: 0 auto 5rem;">
+      <h2 style="font-family: 'Playfair Display', serif; font-size: 3.5rem; font-weight: 900; color: var(--navy); margin-bottom: 1.5rem;">Our Product Collections</h2>
+      <p style="font-size: 1.2rem; color: #6b6b6b; line-height: 1.8;">Comprehensive instrumentation solutions engineered to the highest standards</p>
+    </div>
+    <div style="max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2.5rem;">
+      <div style="background: white; border-radius: 25px; padding: 3rem 2.5rem; box-shadow: 0 20px 60px rgba(0,0,0,0.1); transition: all 0.3s;">
+        <div style="font-size: 3.5rem; margin-bottom: 1.5rem;">📏</div>
+        <h3 style="font-size: 1.5rem; color: var(--navy); margin-bottom: 1rem; font-weight: 700;">Level Instrumentation</h3>
+        <p style="color: #6b6b6b; line-height: 1.7; margin-bottom: 1.5rem;">Magnetic level indicators, float switches, and level transmitters for precise measurement.</p>
+        <a href="/collections/level-instrumentation" style="color: var(--gold); font-weight: 700; text-decoration: none;">View Products →</a>
+      </div>
+      <div style="background: white; border-radius: 25px; padding: 3rem 2.5rem; box-shadow: 0 20px 60px rgba(0,0,0,0.1); transition: all 0.3s;">
+        <div style="font-size: 3.5rem; margin-bottom: 1.5rem;">⚙️</div>
+        <h3 style="font-size: 1.5rem; color: var(--navy); margin-bottom: 1rem; font-weight: 700;">Diaphragm Seal Systems</h3>
+        <p style="color: #6b6b6b; line-height: 1.7; margin-bottom: 1.5rem;">ASME certified seals for extreme pressure and temperature applications.</p>
+        <a href="/collections/diaphragm-seal-systems" style="color: var(--gold); font-weight: 700; text-decoration: none;">View Products →</a>
+      </div>
+      <div style="background: white; border-radius: 25px; padding: 3rem 2.5rem; box-shadow: 0 20px 60px rgba(0,0,0,0.1); transition: all 0.3s;">
+        <div style="font-size: 3.5rem; margin-bottom: 1.5rem;">🏭</div>
+        <h3 style="font-size: 1.5rem; color: var(--navy); margin-bottom: 1rem; font-weight: 700;">Equipment & Systems</h3>
+        <p style="color: #6b6b6b; line-height: 1.7; margin-bottom: 1.5rem;">Pressure vessels, storage tanks, and custom engineered systems.</p>
+        <a href="/collections/equipment-and-systems" style="color: var(--gold); font-weight: 700; text-decoration: none;">View Products →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="final-cta" id="contact">
+    <div class="cta-box">
+      <h2>Let's Create Excellence Together</h2>
+      <p>Partner with Shridhan for instrumentation solutions that exceed expectations</p>
+      <form class="contact-form" onsubmit="event.preventDefault();">
+        <input type="text" class="form-input" placeholder="Your Name" required>
+        <input type="email" class="form-input" placeholder="Email Address" required>
+        <input type="tel" class="form-input" placeholder="Phone Number">
+        <input type="text" class="form-input" placeholder="Company Name">
+        <button type="submit" class="form-submit">Request Consultation</button>
+      </form>
+    </div>
+  </section>
+
+  <script>
+    // Rotating strengths animation
+    const rotatingStrengths = document.getElementById('rotating-strengths');
+    if (rotatingStrengths) {
+      const items = rotatingStrengths.children;
+      const itemHeight = items[0].offsetHeight;
+      let currentIndex = 0;
+
+      setInterval(() => {
+        currentIndex = (currentIndex + 1) % items.length;
+        rotatingStrengths.style.transform = `translateY(-${currentIndex * itemHeight}px)`;
+      }, 3000);
+    }
+
+    // Smooth scrolling
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // Parallax on scroll
+    window.addEventListener('scroll', () => {
+      const scrolled = window.pageYOffset;
+      const hero = document.querySelector('.full-hero');
+      if (hero && scrolled < window.innerHeight) {
+        const heroBg = document.querySelector('.hero-bg');
+        if (heroBg) heroBg.style.transform = `translateY(${scrolled * 0.5}px)`;
+      }
+    });
+
+    // Animate visual cards on scroll
+    const visualCards = document.querySelectorAll('.visual-card');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, index) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+          }, index * 100);
+        }
+      });
+    }, { threshold: 0.2 });
+
+    visualCards.forEach(card => {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(30px)';
+      card.style.transition = 'all 0.6s ease-out';
+      observer.observe(card);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+# Default rules for all files
+/*
+  X-Robots-Tag: all
+
+# Cache Astro build assets (hashed) for 1 year
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Cache static assets (images, fonts, css, js) for 1 year
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/images/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Cache favicon
+/favicon.ico
+  Cache-Control: public, max-age=604800
+
+# HTML files - Do not cache (or cache very briefly) to ensure content updates are seen
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Data files (JSON/XML) - Do not cache
+/*.json
+  Cache-Control: no-cache
+/*.xml
+  Cache-Control: no-cache
