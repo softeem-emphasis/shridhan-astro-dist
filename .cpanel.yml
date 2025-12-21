@@ -1,7 +1,7 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home1/zrjlxfte/softeem.org
+    - export DEPLOYPATH=/home1/zrjlxfte/shridhan.softeem.org
     - /bin/mkdir -p $DEPLOYPATH
     - /bin/cp -R /home1/zrjlxfte/repositories/shridhan-astro-dist/* $DEPLOYPATH
     - /bin/ls -la $DEPLOYPATH
