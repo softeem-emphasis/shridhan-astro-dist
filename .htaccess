@@ -1,3 +1,21 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Handle trailing slashes: remove them if not a directory
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_URI} (.+)/$
+  RewriteRule ^ %1 [L,R=301]
+
+  # Rewrite "foo" to "foo.html" if it exists
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME}.html -f
+  RewriteRule ^(.*)$ $1.html [L]
+
+  # Custom 404
+  ErrorDocument 404 /404.html
+</IfModule>
+
 <IfModule mod_deflate.c>
   <IfModule mod_setenvif.c>
     <IfModule mod_headers.c>
