@@ -1,34 +1,20 @@
+# Custom 404 page
+ErrorDocument 404 /404.html
 
-# ----------------------------------------------------------------------
-# | Minimal/Optimized .htaccess for Shared LAMP Hosting |
-# ----------------------------------------------------------------------
-
-# 1. Enable Rewriting
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  RewriteBase /
 
-  # 2. Custom 404 Error Page
-  # Tells the server to show /404.html when a file isn't found
-  ErrorDocument 404 /404.html
+  # 1. Do NOT rewrite real files or directories
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
 
-  # 3. Handle Clean URLs (Extensionless .html)
-  # If request is /page, and /page.html exists, serve /page.html internally.
-  RewriteCond %{REQUEST_FILENAME} !-d
+  # 2. Extensionless HTML support
   RewriteCond %{REQUEST_FILENAME}.html -f
-  RewriteRule ^(.*?)/?$ $1.html [L]
+  RewriteRule ^(.+)$ $1.html [L]
 
-  # 4. Standard Trailing Slash Redirect
-  # Redirects /folder to /folder/ for better SEO and compatibility
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_URI} !(/$|\.) 
-  RewriteRule (.*) %{REQUEST_URI}/ [R=301,L]
-</IfModule>
-
-# 5. Basic Caching (Optional but Recommended)
-# Helps your site load faster for returning visitors
-<IfModule mod_expires.c>
-  ExpiresActive on
-  ExpiresDefault "access plus 1 month"
-  ExpiresByType text/html "access plus 0 seconds"
+  # 3. Optional trailing slash normalization for real directories
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteCond %{REQUEST_URI} !/$
+  RewriteRule ^(.+)$ $1/ [R=301,L]
 </IfModule>
