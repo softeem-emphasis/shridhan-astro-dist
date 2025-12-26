@@ -1,5 +1,60 @@
 <?php
-// Set the content type to JSON
+// Custom Error Handling to return JSON instead of HTML/Text text
+ini_set('display_errors', 0); // Don't print locally
+error_reporting(E_ALL);       // Report everything
+
+// 1. Handle Warnings/Notices
+function jsonErrorHandler($errno, $errstr, $errfile, $errline) {
+    // Check if error was suppressed with @
+    if (!(error_reporting() & $errno)) {
+        return false;
+    }
+    
+    // clean buffers
+    while (ob_get_level()) { ob_end_clean(); }
+    
+    http_response_code(500);
+    header('Content-Type: application/json');
+    echo json_encode([
+        'status' => 'error', 
+        'message' => "PHP Error ($errno): $errstr in " . basename($errfile) . ":$errline"
+    ]);
+    exit;
+}
+set_error_handler("jsonErrorHandler");
+
+// 2. Handle Fatal Errors (Shutdown)
+function jsonShutdownHandler() {
+    $error = error_get_last();
+    if ($error && ($error['type'] === E_ERROR || $error['type'] === E_PARSE || $error['type'] === E_COMPILE_ERROR)) {
+        // clean buffers
+        while (ob_get_level()) { ob_end_clean(); }
+        
+        http_response_code(500);
+        header('Content-Type: application/json');
+        echo json_encode([
+            'status' => 'error', 
+            'message' => "Fatal System Error: {$error['message']} in " . basename($error['file']) . ":{$error['line']}"
+        ]);
+    }
+}
+register_shutdown_function("jsonShutdownHandler");
+
+// Start output buffering to catch any stray text before JSON by default
+ob_start();
+
+// Helper to send clean JSON response
+function sendJson($data, $code = 200) {
+    // Discard any buffered output (warnings, whitespace from includes, etc.)
+    while (ob_get_level()) { ob_clean(); }
+    
+    http_response_code($code);
+    header('Content-Type: application/json');
+    echo json_encode($data);
+    exit;
+}
+
+// Set the content type to JSON (initial header, though sendJson will override)
 header('Content-Type: application/json');
 
 // Check if the form was submitted using POST method
@@ -8,21 +63,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // --- BASIC RATE LIMITING ---
     session_start();
     if (isset($_SESSION['last_submission']) && (time() - $_SESSION['last_submission']) < 60) {
-        http_response_code(429); // Too Many Requests
-        echo json_encode(['status' => 'error', 'message' => 'Please wait a moment before submitting another message.']);
-        exit;
+        sendJson(['status' => 'error', 'message' => 'Please wait a moment before submitting another message.'], 429);
     }
 
     // --- HONEYPOT SPAM CHECK ---
     // If the hidden 'fax' field is filled out, it's likely a bot.
     if (!empty($_POST['fax'])) {
-        echo json_encode(['status' => 'success', 'message' => 'Message sent successfully!']); // Pretend it was successful
-        exit;
+        sendJson(['status' => 'success', 'message' => 'Message sent successfully!']);
     }
 
     // --- CONFIGURATION ---
     // Set the recipient email address
-    $recipient_email = CONTACT_FORM_RECIPIENT; // Defined in mail-config.php
+    // Use the constant if defined, otherwise fallback or error
+    $recipient_email = defined('CONTACT_FORM_RECIPIENT') ? CONTACT_FORM_RECIPIENT : 'marketing@shridhan.com';
     // Set the subject of the email
     $subject = "New Contact Form Submission from Shridhan Website";
 
@@ -44,25 +97,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $content_to_check = strtolower($name . ' ' . $message);
     foreach ($spam_keywords as $keyword) {
         if (strpos($content_to_check, $keyword) !== false) {
-            // Silently reject spam but pretend success
-            echo json_encode(['status' => 'success', 'message' => 'Message sent successfully!']);
-            exit;
+            // Silently reject spam
+            sendJson(['status' => 'success', 'message' => 'Message sent successfully!']);
         }
     }
 
     if (!empty($errors)) {
-        http_response_code(400); // Bad Request
-        echo json_encode(['status' => 'error', 'message' => implode(' ', $errors)]);
-        exit;
+        sendJson(['status' => 'error', 'message' => implode(' ', $errors)], 400);
     }
 
     // --- EMAIL COMPOSITION & SENDING (PHPMailer) ---
     
     // Check if configuration exists
     if (!file_exists('mail-config.php')) {
-        http_response_code(500);
-        echo json_encode(['status' => 'error', 'message' => 'Server configuration error: mail-config.php is missing.']);
-        exit;
+        sendJson(['status' => 'error', 'message' => 'Server configuration error: mail-config.php is missing.'], 500);
     }
 
     // Load PHPMailer manually (since we don't have Composer autoload)
@@ -116,18 +164,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         // Success
         $_SESSION['last_submission'] = time();
-        echo json_encode(['status' => 'success', 'message' => 'Thank you! Your message has been sent.']);
+        sendJson(['status' => 'success', 'message' => 'Thank you! Your message has been sent.']);
 
     } catch (Exception $e) {
-        http_response_code(500);
         // Log the actual error to server error log, but don't show to user
         error_log("Mailer Error: {$mail->ErrorInfo}");
-        echo json_encode(['status' => 'error', 'message' => 'Sorry, the message could not be sent. Please try again later.']);
+        sendJson(['status' => 'error', 'message' => 'Sorry, the message could not be sent. Please try again later.'], 500);
     }
 
 } else {
-    http_response_code(405); // Method Not Allowed
-    echo json_encode(['status' => 'error', 'message' => 'Method not allowed.']);
+    sendJson(['status' => 'error', 'message' => 'Method not allowed.'], 405);
 }
-exit;
 ?>
