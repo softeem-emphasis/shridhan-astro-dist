@@ -22,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // --- CONFIGURATION ---
     // Set the recipient email address
-    $recipient_email = "marketing@shridhan.com"; // <-- IMPORTANT: Replace with your email address
+    $recipient_email = CONTACT_FORM_RECIPIENT; // Defined in mail-config.php
     // Set the subject of the email
     $subject = "New Contact Form Submission from Shridhan Website";
 
@@ -56,37 +56,73 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 
-    // --- EMAIL COMPOSITION ---
-    $email_body = "You have received a new message from your website contact form.\n\n";
-    $email_body .= "Here are the details:\n\n";
-    $email_body .= "================\n";
-    $email_body .= "Name: " . $name . "\n";
-    $email_body .= "Email: " . $email . "\n";
-    if (!empty($phone)) {
-        $email_body .= "Phone: " . $phone . "\n";
+    // --- EMAIL COMPOSITION & SENDING (PHPMailer) ---
+    
+    // Check if configuration exists
+    if (!file_exists('mail-config.php')) {
+        http_response_code(500);
+        echo json_encode(['status' => 'error', 'message' => 'Server configuration error: mail-config.php is missing.']);
+        exit;
     }
-    $email_body .= "Submitted: " . date('F j, Y, g:i a T') . "\n";
-    $email_body .= "IP Address: " . ($_SERVER['REMOTE_ADDR'] ?? 'Not available') . "\n\n";
-    $email_body .= "Message:\n";
-    $email_body .= "========\n";
-    $email_body .= $message . "\n";
 
-    // --- EMAIL HEADERS (Optimized for deliverability) ---
-    $headers = [];
-    $headers[] = "From: Shridhan Contact Form <noreply@softeem.ca>";
-    $headers[] = "Reply-To: " . $name . " <" . $email . ">";
-    $headers[] = "Return-Path: noreply@softeem.ca"; // Important for bounce handling
-    $headers[] = "X-Mailer: PHP/" . phpversion();
-    $headers[] = "MIME-Version: 1.0";
-    $headers[] = "Content-Type: text/plain; charset=UTF-8";
+    // Load PHPMailer manually (since we don't have Composer autoload)
+    require 'vendor/PHPMailer/src/Exception.php';
+    require 'vendor/PHPMailer/src/PHPMailer.php';
+    require 'vendor/PHPMailer/src/SMTP.php';
+    require 'mail-config.php';
 
-    // --- SEND EMAIL ---
-    if (mail($recipient_email, $subject, $email_body, implode("\r\n", $headers))) {
+    use PHPMailer\PHPMailer\PHPMailer;
+    use PHPMailer\PHPMailer\Exception;
+
+    $mail = new PHPMailer(true);
+
+    try {
+        //Server settings
+        $mail->isSMTP();
+        $mail->Host       = SMTP_HOST;
+        $mail->SMTPAuth   = true;
+        $mail->Username   = SMTP_USER;
+        $mail->Password   = SMTP_PASS;
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = SMTP_PORT;
+
+        //Recipients
+        $mail->setFrom(SMTP_FROM_EMAIL, SMTP_FROM_NAME);
+        $mail->addAddress($recipient_email);
+        $mail->addReplyTo($email, $name);
+
+        //Content
+        $mail->isHTML(false); // Plain text for now
+        $mail->Subject = $subject;
+        
+        // Construct Body
+        $email_body = "You have received a new message from your website contact form.\n\n";
+        $email_body .= "Here are the details:\n\n";
+        $email_body .= "================\n";
+        $email_body .= "Name: " . $name . "\n";
+        $email_body .= "Email: " . $email . "\n";
+        if (!empty($phone)) {
+            $email_body .= "Phone: " . $phone . "\n";
+        }
+        $email_body .= "Submitted: " . date('F j, Y, g:i a T') . "\n";
+        $email_body .= "IP Address: " . ($_SERVER['REMOTE_ADDR'] ?? 'Not available') . "\n\n";
+        $email_body .= "Message:\n";
+        $email_body .= "========\n";
+        $email_body .= $message . "\n";
+
+        $mail->Body = $email_body;
+
+        $mail->send();
+        
+        // Success
         $_SESSION['last_submission'] = time();
         echo json_encode(['status' => 'success', 'message' => 'Thank you! Your message has been sent.']);
-    } else {
-        http_response_code(500); // Internal Server Error
-        echo json_encode(['status' => 'error', 'message' => 'Sorry, there was a server error. Please try again later.']);
+
+    } catch (Exception $e) {
+        http_response_code(500);
+        // Log the actual error to server error log, but don't show to user
+        error_log("Mailer Error: {$mail->ErrorInfo}");
+        echo json_encode(['status' => 'error', 'message' => 'Sorry, the message could not be sent. Please try again later.']);
     }
 
 } else {
