@@ -73,9 +73,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // --- EMAIL HEADERS (Optimized for deliverability) ---
     $headers = [];
-    $headers[] = "From: Shridhan Contact Form <noreply@shridhan.com>";
+    $headers[] = "From: Shridhan Contact Form <noreply@softeem.ca>";
     $headers[] = "Reply-To: " . $name . " <" . $email . ">";
-    $headers[] = "Return-Path: noreply@shridhan.com"; // Important for bounce handling
+    $headers[] = "Return-Path: noreply@softeem.ca"; // Important for bounce handling
     $headers[] = "X-Mailer: PHP/" . phpversion();
     $headers[] = "MIME-Version: 1.0";
     $headers[] = "Content-Type: text/plain; charset=UTF-8";
