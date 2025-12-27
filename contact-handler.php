@@ -1,97 +1,90 @@
 <?php
-// Set the content type to JSON
-header('Content-Type: application/json');
+// Production Contact Form Handler
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
 
-// Check if the form was submitted using POST method
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-    // --- BASIC RATE LIMITING ---
-    session_start();
-    if (isset($_SESSION['last_submission']) && (time() - $_SESSION['last_submission']) < 60) {
-        http_response_code(429); // Too Many Requests
-        echo json_encode(['status' => 'error', 'message' => 'Please wait a moment before submitting another message.']);
-        exit;
-    }
-
-    // --- HONEYPOT SPAM CHECK ---
-    // If the hidden 'fax' field is filled out, it's likely a bot.
-    if (!empty($_POST['fax'])) {
-        echo json_encode(['status' => 'success', 'message' => 'Message sent successfully!']); // Pretend it was successful
-        exit;
-    }
-
-    // --- CONFIGURATION ---
-    // Set the recipient email address
-    $recipient_email = "marketing@shridhan.com"; // <-- IMPORTANT: Replace with your email address
-    // Set the subject of the email
-    $subject = "New Contact Form Submission from Shridhan Website";
-
-    // --- DATA SANITIZATION ---
-    $name = htmlspecialchars(strip_tags(trim($_POST["name"] ?? '')), ENT_QUOTES, 'UTF-8');
-    $email = filter_var(trim($_POST["email"] ?? ''), FILTER_SANITIZE_EMAIL);
-    $phone = htmlspecialchars(strip_tags(trim($_POST["phone"] ?? '')), ENT_QUOTES, 'UTF-8');
-    $message = htmlspecialchars(strip_tags(trim($_POST["message"] ?? '')), ENT_QUOTES, 'UTF-8');
-
-    // --- VALIDATION ---
-    $errors = [];
-    if (empty($name) || strlen($name) < 2) { $errors[] = "Name is required."; }
-    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) { $errors[] = "A valid email is required."; }
-    if (empty($message) || strlen($message) < 10) { $errors[] = "Message must be at least 10 characters."; }
-    if (!empty($phone) && !preg_match('/^[\+]?[0-9\s\-\(\)]{7,20}$/', $phone)) { $errors[] = "Please enter a valid phone number."; }
-
-    // Basic spam content detection
-    $spam_keywords = ['viagra', 'cialis', 'casino', 'lottery', 'winner', '[url=', '[link='];
-    $content_to_check = strtolower($name . ' ' . $message);
-    foreach ($spam_keywords as $keyword) {
-        if (strpos($content_to_check, $keyword) !== false) {
-            // Silently reject spam but pretend success
-            echo json_encode(['status' => 'success', 'message' => 'Message sent successfully!']);
-            exit;
-        }
-    }
-
-    if (!empty($errors)) {
-        http_response_code(400); // Bad Request
-        echo json_encode(['status' => 'error', 'message' => implode(' ', $errors)]);
-        exit;
-    }
-
-    // --- EMAIL COMPOSITION ---
-    $email_body = "You have received a new message from your website contact form.\n\n";
-    $email_body .= "Here are the details:\n\n";
-    $email_body .= "================\n";
-    $email_body .= "Name: " . $name . "\n";
-    $email_body .= "Email: " . $email . "\n";
-    if (!empty($phone)) {
-        $email_body .= "Phone: " . $phone . "\n";
-    }
-    $email_body .= "Submitted: " . date('F j, Y, g:i a T') . "\n";
-    $email_body .= "IP Address: " . ($_SERVER['REMOTE_ADDR'] ?? 'Not available') . "\n\n";
-    $email_body .= "Message:\n";
-    $email_body .= "========\n";
-    $email_body .= $message . "\n";
-
-    // --- EMAIL HEADERS (Optimized for deliverability) ---
-    $headers = [];
-    $headers[] = "From: Shridhan Contact Form <noreply@softeem.ca>";
-    $headers[] = "Reply-To: " . $name . " <" . $email . ">";
-    $headers[] = "Return-Path: noreply@softeem.ca"; // Important for bounce handling
-    $headers[] = "X-Mailer: PHP/" . phpversion();
-    $headers[] = "MIME-Version: 1.0";
-    $headers[] = "Content-Type: text/plain; charset=UTF-8";
-
-    // --- SEND EMAIL ---
-    if (mail($recipient_email, $subject, $email_body, implode("\r\n", $headers))) {
-        $_SESSION['last_submission'] = time();
-        echo json_encode(['status' => 'success', 'message' => 'Thank you! Your message has been sent.']);
-    } else {
-        http_response_code(500); // Internal Server Error
-        echo json_encode(['status' => 'error', 'message' => 'Sorry, there was a server error. Please try again later.']);
-    }
-
-} else {
-    http_response_code(405); // Method Not Allowed
-    echo json_encode(['status' => 'error', 'message' => 'Method not allowed.']);
+// Simple JSON sender
+function sendJson($data, $code = 200) {
+    http_response_code($code);
+    header('Content-Type: application/json');
+    echo json_encode($data);
+    exit;
 }
-exit;
-?>
+
+// Check POST
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+    sendJson(['status' => 'error', 'message' => 'Method not allowed'], 405);
+}
+
+// Load config
+if (!file_exists('mail-config.php')) {
+    sendJson(['status' => 'error', 'message' => 'Config missing'], 500);
+}
+define('MAIL_CONFIG_INCLUDED', true); // Security: Allow config file to load
+require 'mail-config.php';
+
+// Honeypot spam check - if filled, it's a bot
+if (!empty($_POST['website'])) {
+    // Pretend success to fool the bot, but don't send email
+    sendJson(['status' => 'success', 'message' => 'Message sent!']);
+}
+
+// Get form data
+$name = trim($_POST["name"] ?? '');
+$email = trim($_POST["email"] ?? '');
+$phone = trim($_POST["phone"] ?? '');
+$message = trim($_POST["message"] ?? '');
+
+// Basic validation
+if (empty($name) || empty($email) || empty($message)) {
+    sendJson(['status' => 'error', 'message' => 'All fields required'], 400);
+}
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    sendJson(['status' => 'error', 'message' => 'Invalid email'], 400);
+}
+
+// Load PHPMailer
+require 'vendor/PHPMailer/src/Exception.php';
+require 'vendor/PHPMailer/src/PHPMailer.php';
+require 'vendor/PHPMailer/src/SMTP.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+$mail = new PHPMailer(true);
+
+try {
+    // SMTP setup
+    $mail->isSMTP();
+    $mail->Host       = SMTP_HOST;
+    $mail->SMTPAuth   = true;
+    $mail->Username   = SMTP_USER;
+    $mail->Password   = SMTP_PASS;
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Port       = SMTP_PORT;
+
+    $mail->setFrom(SMTP_FROM_EMAIL, SMTP_FROM_NAME);
+    $mail->addAddress(CONTACT_FORM_RECIPIENT);
+
+    $mail->isHTML(false);
+    $mail->Subject = "Message from Shridhan website";
+    
+    // Build email body
+    $body = "Name: $name\nEmail: $email\n";
+    if (!empty($phone)) {
+        $body .= "Phone: $phone\n";
+    }
+    $body .= "\nMessage:\n$message";
+    
+    $mail->Body = $body;
+
+    $mail->send();
+    sendJson(['status' => 'success', 'message' => 'Message sent!']);
+
+} catch (Exception $e) {
+    // Log to custom file for easy debugging
+    $log_entry = date('[Y-m-d H:i:s]') . " Mailer Error: {$mail->ErrorInfo}\n";
+    file_put_contents(__DIR__ . '/contact-errors.log', $log_entry, FILE_APPEND);
+    
+    sendJson(['status' => 'error', 'message' => 'Message could not be sent. Please try again later.'], 500);
+}

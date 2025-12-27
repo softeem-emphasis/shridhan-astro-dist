@@ -3,6 +3,11 @@ ErrorDocument 404 /404.html
 AddDefaultCharset UTF-8
 Options -Indexes
 
+# SECURITY: Block direct access to sensitive files
+<FilesMatch "^(mail-config\.php|contact-errors\.log)$">
+  Require all denied
+</FilesMatch>
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
