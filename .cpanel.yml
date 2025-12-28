@@ -7,10 +7,10 @@ deployment:
 
     # 2. Sync files using rsync
     # -a: Archive mode (preserves permissions, times, and symbolic links)
-    # -v: Verbose (shows you what files are being copied in the logs)
+    # -v: Verbose (shows files being copied in the logs)
     # --delete: Remove files from server that don't exist in repo
     # --exclude: Protect server-specific files and version control from sync/deletion
-    - /usr/bin/rsync -av --delete --exclude='.git' --exclude='.cpanel.yml' --exclude='mail-config.php' --exclude='.htaccess' --exclude='.env' --exclude='*.local.php' /home1/zrjlxfte/repositories/shridhan-astro-dist/. $DEPLOYPATH/
+    - /usr/bin/rsync -av --delete --exclude='.git' --exclude='.cpanel.yml' --exclude='mail-config.php' --exclude='.env' --exclude='*.local.php' /home1/zrjlxfte/repositories/shridhan-astro-dist/. $DEPLOYPATH/
 
     # 3. (Optional) List files to verify
     - /bin/ls -la $DEPLOYPATH
