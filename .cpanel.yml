@@ -1,8 +1,23 @@
 ---
 deployment:
   tasks:
+    # Set the deployment destination path (document root for the website)
     - export DEPLOYPATH=/home1/zrjlxfte/shridhan.softeem.org
+    
+    # Create the deployment directory if it doesn't exist (with parent directories)
     - /bin/mkdir -p $DEPLOYPATH
-    - /bin/cp -R /home1/zrjlxfte/repositories/shridhan-astro-dist/. $DEPLOYPATH
+    
+    # Sync files from build output to deployment path with permission correction
+    # -r: recursive (copy all subdirectories)
+    # -l: copy symlinks as symlinks
+    # -t: preserve modification times
+    # -v: verbose output for logging
+    # -z: compress data during transfer
+    # --delete: remove files in destination that don't exist in source (clean deployment)
+    # --chmod=D755,F644: set Directories to 755 and Files to 644 (prevents 403 errors)
+    # --exclude='.git': don't copy git metadata
+    - /usr/bin/rsync -rltvz --delete --chmod=D755,F644 --exclude='.git' /home1/zrjlxfte/repositories/shridhan-astro-dist/. $DEPLOYPATH/
+    
+    # List deployed files for verification in deployment logs
     - /bin/ls -la $DEPLOYPATH
 
